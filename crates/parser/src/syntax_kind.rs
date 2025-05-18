@@ -133,6 +133,15 @@ pub enum SyntaxKind {
     #[regex("#if.*")]
     UnofficialPreprocessIf,
 
+    /// WESL `import foo` or `import foo::bar` or `import foo::{ bar, ... }`
+    #[regex("import")]
+    UnofficialWeslImport,
+
+    WeslImportStatement,
+    WeslImportCollection,
+    WeslImportPathOrItem,
+    WeslImportRelative,
+
     #[regex("//.*")]
     Comment,
 

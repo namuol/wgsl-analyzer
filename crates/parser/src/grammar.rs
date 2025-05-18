@@ -31,6 +31,8 @@ fn item(parser: &mut Parser) {
     attribute_list_opt(parser);
     if parser.at(SyntaxKind::UnofficialPreprocessorImport) {
         import(parser, marker);
+    } else if parser.at(SyntaxKind::UnofficialWeslImport) {
+        wesl_import(parser, marker);
     } else if parser.at(SyntaxKind::Fn) {
         function(parser, marker);
     } else if parser.at(SyntaxKind::Struct) {
@@ -76,6 +78,31 @@ fn import(
         }
         marker.complete(parser, SyntaxKind::ImportCustom);
     }
+
+    marker.complete(parser, SyntaxKind::Import);
+}
+
+fn wesl_import_path_or_item(parser: &mut Parser) {
+    let marker = parser.start();
+    parser.expect(SyntaxKind::Identifier);
+
+    if parser.at(SyntaxKind::ColonColon) {
+        parser.bump();
+        wesl_import_path_or_item(parser);
+    }
+
+    marker.complete(parser, SyntaxKind::WeslImportPathOrItem);
+}
+
+fn wesl_import(
+    parser: &mut Parser,
+    marker: Marker,
+) {
+    parser.expect(SyntaxKind::UnofficialWeslImport);
+
+    wesl_import_path_or_item(parser);
+
+    parser.expect(SyntaxKind::Semicolon);
 
     marker.complete(parser, SyntaxKind::Import);
 }

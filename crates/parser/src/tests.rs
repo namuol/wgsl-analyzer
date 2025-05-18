@@ -2555,6 +2555,44 @@ fn parse_string_import() {
     );
 }
 
+// ---- WESL imports ----
+
+#[test]
+fn parse_wesl_import() {
+    check(
+        "import test;",
+        expect![[r#"
+            SourceFile@0..12
+              Import@0..12
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..11
+                  Identifier@7..11 "test"
+                Semicolon@11..12 ";""#]],
+    );
+}
+
+#[test]
+fn parse_wesl_import_colon() {
+    check(
+        "import test::foo::bar;",
+        expect![[r#"
+            SourceFile@0..22
+              Import@0..22
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..21
+                  Identifier@7..11 "test"
+                  ColonColon@11..13 "::"
+                  WeslImportPathOrItem@13..21
+                    Identifier@13..16 "foo"
+                    ColonColon@16..18 "::"
+                    WeslImportPathOrItem@18..21
+                      Identifier@18..21 "bar"
+                Semicolon@21..22 ";""#]],
+    );
+}
+
 #[test]
 
 fn parse_switch_statement() {
