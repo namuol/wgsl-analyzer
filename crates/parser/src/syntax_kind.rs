@@ -140,6 +140,7 @@ pub enum SyntaxKind {
     WeslImportStatement,
     WeslImportCollection,
     WeslImportPathOrItem,
+    WeslImportAs,
     WeslImportRelative,
 
     #[regex("//.*")]

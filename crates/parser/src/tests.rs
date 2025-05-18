@@ -2563,7 +2563,7 @@ fn parse_wesl_import() {
         "import test;",
         expect![[r#"
             SourceFile@0..12
-              Import@0..12
+              WeslImportStatement@0..12
                 UnofficialWeslImport@0..6 "import"
                 Whitespace@6..7 " "
                 WeslImportPathOrItem@7..11
@@ -2578,7 +2578,7 @@ fn parse_wesl_import_colon() {
         "import test::foo::bar;",
         expect![[r#"
             SourceFile@0..22
-              Import@0..22
+              WeslImportStatement@0..22
                 UnofficialWeslImport@0..6 "import"
                 Whitespace@6..7 " "
                 WeslImportPathOrItem@7..21

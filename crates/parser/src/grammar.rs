@@ -104,7 +104,7 @@ fn wesl_import(
 
     parser.expect(SyntaxKind::Semicolon);
 
-    marker.complete(parser, SyntaxKind::Import);
+    marker.complete(parser, SyntaxKind::WeslImportStatement);
 }
 
 fn override_declaration(
