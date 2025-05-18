@@ -138,6 +138,10 @@ pub enum SyntaxKind {
     UnofficialWeslImport,
     #[regex("as")]
     UnofficialWeslAs,
+    #[regex("package")]
+    UnofficialWeslPackage,
+    #[regex("super")]
+    UnofficialWeslSuper,
 
     WeslImportStatement,
     WeslImportCollection,

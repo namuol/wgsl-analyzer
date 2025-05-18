@@ -82,6 +82,58 @@ fn import(
     marker.complete(parser, SyntaxKind::Import);
 }
 
+/// Implementation of `import_statement` from the WESL Specification grammar.
+///
+/// ```txt
+/// import_statement:
+/// | 'import' import_relative? (import_collection | import_path_or_item) ';'
+/// ```
+///
+/// See also:
+///
+/// - [wesl_import_relative]
+/// - [wesl_import_path_or_item]
+fn wesl_import_statement(
+    parser: &mut Parser,
+    marker: Marker,
+) {
+    parser.expect(SyntaxKind::UnofficialWeslImport);
+
+    wesl_import_relative(parser);
+
+    wesl_import_path_or_item(parser);
+
+    parser.expect(SyntaxKind::Semicolon);
+
+    marker.complete(parser, SyntaxKind::WeslImportStatement);
+}
+
+/// Implementation of `import_relative` from the WESL Specification grammar.
+///
+/// ```txt
+/// import_relative:
+/// | 'package' '::' | 'super' '::' ('super' '::')*
+/// ```
+///
+/// See also:
+///
+/// - [wesl_import_statement]
+fn wesl_import_relative(parser: &mut Parser) {
+    if !(parser.at(SyntaxKind::UnofficialWeslPackage) || parser.at(SyntaxKind::UnofficialWeslSuper)) {
+        return;
+    }
+
+    let marker = parser.start();
+    parser.bump();
+    while parser.at(SyntaxKind::ColonColon) {
+        parser.bump();
+        if parser.at(SyntaxKind::UnofficialWeslSuper) {
+            parser.bump();
+        }
+    }
+    marker.complete(parser, SyntaxKind::WeslImportRelative);
+}
+
 /// Implementation of `import_path_or_item` from the WESL Specification grammar.
 ///
 /// ```txt
@@ -106,29 +158,6 @@ fn wesl_import_path_or_item(parser: &mut Parser) {
     }
 
     marker.complete(parser, SyntaxKind::WeslImportPathOrItem);
-}
-
-/// Implementation of `import_statement` from the WESL Specification grammar.
-///
-/// ```txt
-/// import_statement:
-/// | 'import' import_relative? (import_collection | import_path_or_item) ';'  
-/// ```
-///
-/// See also:
-///
-/// - [wesl_import_path_or_item]
-fn wesl_import_statement(
-    parser: &mut Parser,
-    marker: Marker,
-) {
-    parser.expect(SyntaxKind::UnofficialWeslImport);
-
-    wesl_import_path_or_item(parser);
-
-    parser.expect(SyntaxKind::Semicolon);
-
-    marker.complete(parser, SyntaxKind::WeslImportStatement);
 }
 
 fn override_declaration(

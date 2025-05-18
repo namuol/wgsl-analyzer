@@ -2613,6 +2613,45 @@ fn parse_wesl_import_as() {
 }
 
 #[test]
+fn parse_wesl_import_package_relative() {
+    check(
+        "import package::test;",
+        expect![[r#"
+            SourceFile@0..21
+              WeslImportStatement@0..21
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportRelative@7..16
+                  UnofficialWeslPackage@7..14 "package"
+                  ColonColon@14..16 "::"
+                WeslImportPathOrItem@16..20
+                  Identifier@16..20 "test"
+                Semicolon@20..21 ";""#]],
+    );
+}
+
+#[test]
+fn parse_wesl_import_super_relative() {
+    check(
+        "import super::super::test;",
+        expect![[r#"
+            SourceFile@0..26
+              WeslImportStatement@0..26
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportRelative@7..21
+                  UnofficialWeslSuper@7..12 "super"
+                  ColonColon@12..14 "::"
+                  UnofficialWeslSuper@14..19 "super"
+                  ColonColon@19..21 "::"
+                WeslImportPathOrItem@21..25
+                  Identifier@21..25 "test"
+                Semicolon@25..26 ";""#]],
+    );
+}
+
+
+#[test]
 
 fn parse_switch_statement() {
     check_statement(
