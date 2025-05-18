@@ -119,7 +119,8 @@ fn wesl_import_statement(
 ///
 /// - [wesl_import_statement]
 fn wesl_import_relative(parser: &mut Parser) {
-    if !(parser.at(SyntaxKind::UnofficialWeslPackage) || parser.at(SyntaxKind::UnofficialWeslSuper)) {
+    if !(parser.at(SyntaxKind::UnofficialWeslPackage) || parser.at(SyntaxKind::UnofficialWeslSuper))
+    {
         return;
     }
 
@@ -145,19 +146,46 @@ fn wesl_import_relative(parser: &mut Parser) {
 /// See also:
 ///
 /// - [wesl_import_statement]
+/// - [wesl_import_collection]
 fn wesl_import_path_or_item(parser: &mut Parser) {
     let marker = parser.start();
     parser.expect(SyntaxKind::Identifier);
 
     if parser.at(SyntaxKind::ColonColon) {
         parser.bump();
-        wesl_import_path_or_item(parser);
+        if parser.at(SyntaxKind::BraceLeft) {
+            wesl_import_collection(parser);
+        } else {
+            wesl_import_path_or_item(parser);
+        }
     } else if parser.at(SyntaxKind::UnofficialWeslAs) {
         parser.bump();
         parser.expect(SyntaxKind::Identifier);
     }
 
     marker.complete(parser, SyntaxKind::WeslImportPathOrItem);
+}
+
+/// Implementation of `import_collection` from the WESL Specification grammar.
+///
+/// ```txt
+/// import_collection:
+/// | '{' (import_path_or_item) (',' (import_path_or_item))* ','? '}'
+/// ```
+///
+/// See also:
+///
+/// - [wesl_import_statement]
+/// - [wesl_import_path_or_item]
+fn wesl_import_collection(parser: &mut Parser) {
+    list_multisep(
+        parser,
+        SyntaxKind::BraceLeft,
+        SyntaxKind::BraceRight,
+        &[SyntaxKind::Comma],
+        SyntaxKind::WeslImportCollection,
+        wesl_import_path_or_item,
+    );
 }
 
 fn override_declaration(

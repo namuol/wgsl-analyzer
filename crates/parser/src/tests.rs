@@ -2650,6 +2650,106 @@ fn parse_wesl_import_super_relative() {
     );
 }
 
+#[test]
+fn parse_wesl_import_collection_list() {
+    check(
+        "import test::{ foo, bar };",
+        expect![[r#"
+            SourceFile@0..26
+              WeslImportStatement@0..26
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..25
+                  Identifier@7..11 "test"
+                  ColonColon@11..13 "::"
+                  WeslImportCollection@13..25
+                    BraceLeft@13..14 "{"
+                    Whitespace@14..15 " "
+                    WeslImportPathOrItem@15..18
+                      Identifier@15..18 "foo"
+                    Comma@18..19 ","
+                    Whitespace@19..20 " "
+                    WeslImportPathOrItem@20..24
+                      Identifier@20..23 "bar"
+                      Whitespace@23..24 " "
+                    BraceRight@24..25 "}"
+                Semicolon@25..26 ";""#]],
+    );
+}
+
+#[test]
+fn parse_wesl_import_collection_list_as() {
+    check(
+        "import test::{ foo as biz, bar as baz };",
+        expect![[r#"
+            SourceFile@0..40
+              WeslImportStatement@0..40
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..39
+                  Identifier@7..11 "test"
+                  ColonColon@11..13 "::"
+                  WeslImportCollection@13..39
+                    BraceLeft@13..14 "{"
+                    Whitespace@14..15 " "
+                    WeslImportPathOrItem@15..25
+                      Identifier@15..18 "foo"
+                      Whitespace@18..19 " "
+                      UnofficialWeslAs@19..21 "as"
+                      Whitespace@21..22 " "
+                      Identifier@22..25 "biz"
+                    Comma@25..26 ","
+                    Whitespace@26..27 " "
+                    WeslImportPathOrItem@27..38
+                      Identifier@27..30 "bar"
+                      Whitespace@30..31 " "
+                      UnofficialWeslAs@31..33 "as"
+                      Whitespace@33..34 " "
+                      Identifier@34..37 "baz"
+                      Whitespace@37..38 " "
+                    BraceRight@38..39 "}"
+                Semicolon@39..40 ";""#]],
+    );
+}
+
+#[test]
+fn parse_wesl_import_collection_list_nested() {
+    check(
+        "import a::{b, c::{d, e as f}};",
+        expect![[r#"
+            SourceFile@0..30
+              WeslImportStatement@0..30
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..29
+                  Identifier@7..8 "a"
+                  ColonColon@8..10 "::"
+                  WeslImportCollection@10..29
+                    BraceLeft@10..11 "{"
+                    WeslImportPathOrItem@11..12
+                      Identifier@11..12 "b"
+                    Comma@12..13 ","
+                    Whitespace@13..14 " "
+                    WeslImportPathOrItem@14..28
+                      Identifier@14..15 "c"
+                      ColonColon@15..17 "::"
+                      WeslImportCollection@17..28
+                        BraceLeft@17..18 "{"
+                        WeslImportPathOrItem@18..19
+                          Identifier@18..19 "d"
+                        Comma@19..20 ","
+                        Whitespace@20..21 " "
+                        WeslImportPathOrItem@21..27
+                          Identifier@21..22 "e"
+                          Whitespace@22..23 " "
+                          UnofficialWeslAs@23..25 "as"
+                          Whitespace@25..26 " "
+                          Identifier@26..27 "f"
+                        BraceRight@27..28 "}"
+                    BraceRight@28..29 "}"
+                Semicolon@29..30 ";""#]],
+    );
+}
 
 #[test]
 
