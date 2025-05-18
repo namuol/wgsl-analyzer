@@ -2594,6 +2594,25 @@ fn parse_wesl_import_colon() {
 }
 
 #[test]
+fn parse_wesl_import_as() {
+    check(
+        "import test as foo;",
+        expect![[r#"
+            SourceFile@0..19
+              WeslImportStatement@0..19
+                UnofficialWeslImport@0..6 "import"
+                Whitespace@6..7 " "
+                WeslImportPathOrItem@7..18
+                  Identifier@7..11 "test"
+                  Whitespace@11..12 " "
+                  UnofficialWeslAs@12..14 "as"
+                  Whitespace@14..15 " "
+                  Identifier@15..18 "foo"
+                Semicolon@18..19 ";""#]],
+    );
+}
+
+#[test]
 
 fn parse_switch_statement() {
     check_statement(

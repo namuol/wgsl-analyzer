@@ -136,11 +136,12 @@ pub enum SyntaxKind {
     /// WESL `import foo` or `import foo::bar` or `import foo::{ bar, ... }`
     #[regex("import")]
     UnofficialWeslImport,
+    #[regex("as")]
+    UnofficialWeslAs,
 
     WeslImportStatement,
     WeslImportCollection,
     WeslImportPathOrItem,
-    WeslImportAs,
     WeslImportRelative,
 
     #[regex("//.*")]

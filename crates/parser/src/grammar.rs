@@ -32,7 +32,7 @@ fn item(parser: &mut Parser) {
     if parser.at(SyntaxKind::UnofficialPreprocessorImport) {
         import(parser, marker);
     } else if parser.at(SyntaxKind::UnofficialWeslImport) {
-        wesl_import(parser, marker);
+        wesl_import_statement(parser, marker);
     } else if parser.at(SyntaxKind::Fn) {
         function(parser, marker);
     } else if parser.at(SyntaxKind::Struct) {
@@ -82,6 +82,17 @@ fn import(
     marker.complete(parser, SyntaxKind::Import);
 }
 
+/// Implementation of `import_path_or_item` from the WESL Specification grammar.
+///
+/// ```txt
+/// import_path_or_item:
+/// | ident '::' (import_collection | import_path_or_item)
+/// | ident ('as' ident)?
+/// ```
+///
+/// See also:
+///
+/// - [wesl_import_statement]
 fn wesl_import_path_or_item(parser: &mut Parser) {
     let marker = parser.start();
     parser.expect(SyntaxKind::Identifier);
@@ -89,12 +100,25 @@ fn wesl_import_path_or_item(parser: &mut Parser) {
     if parser.at(SyntaxKind::ColonColon) {
         parser.bump();
         wesl_import_path_or_item(parser);
+    } else if parser.at(SyntaxKind::UnofficialWeslAs) {
+        parser.bump();
+        parser.expect(SyntaxKind::Identifier);
     }
 
     marker.complete(parser, SyntaxKind::WeslImportPathOrItem);
 }
 
-fn wesl_import(
+/// Implementation of `import_statement` from the WESL Specification grammar.
+///
+/// ```txt
+/// import_statement:
+/// | 'import' import_relative? (import_collection | import_path_or_item) ';'  
+/// ```
+///
+/// See also:
+///
+/// - [wesl_import_path_or_item]
+fn wesl_import_statement(
     parser: &mut Parser,
     marker: Marker,
 ) {
